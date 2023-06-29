@@ -325,7 +325,7 @@ class QdrantRemote(QdrantBase):
                 collection_name=collection_name,
                 consistency=consistency,
                 search_request_batch=rest_models.SearchRequestBatch(searches=requests),
-            ).result
+            )
             return http_res
 
     def search(
@@ -444,9 +444,8 @@ class QdrantRemote(QdrantBase):
                     score_threshold=score_threshold,
                 ),
             )
-            result: Optional[List[types.ScoredPoint]] = search_result.result
-            assert result is not None, "Search returned None"
-            return result
+            assert search_result.result is not None, "Search returned None"
+            return search_result
 
     def search_groups(
         self,
@@ -571,11 +570,12 @@ class QdrantRemote(QdrantBase):
                 with_lookup=with_lookup,
             )
 
-            return self.openapi_client.points_api.search_point_groups(
+            result = self.openapi_client.points_api.search_point_groups(
                 search_groups_request=search_groups_request,
                 collection_name=collection_name,
                 consistency=consistency,
-            ).result
+            )
+            return result
 
     def recommend_batch(
         self,
@@ -1064,7 +1064,7 @@ class QdrantRemote(QdrantBase):
                     ordering=ordering,
                 ),
                 timeout=self._timeout,
-            ).result
+            )
 
             assert grpc_result is not None, "Upsert returned None result"
             return GrpcToRest.convert_update_result(grpc_result)
@@ -1087,8 +1087,8 @@ class QdrantRemote(QdrantBase):
                 wait=wait,
                 point_insert_operations=points,
                 ordering=ordering,
-            ).result
-            assert http_result is not None, "Upsert returned None result"
+            )
+            assert http_result.result is not None, "Upsert returned None result"
             return http_result
 
     def update_vectors(
